@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Interactive HTML, CSS, JS Compiler in one tab. Compile and test your HTML, CSS, and JavaScript code seamlessly with a live preview."
+    />
+    <meta
+      name="keywords"
+      content="HTML compiler, CSS compiler, JS compiler, HTML editor, CSS editor, JavaScript editor, real-time code editor, live code preview, HTML sandbox, online HTML compiler, HTML test, web development, front-end development, web design, HTML5, CSS3, JavaScript coding, coding playground, web development tools, code playground, code tester, front-end tools, HTML testing, CSS testing, JavaScript testing, responsive design, code editor online, HTML code checker, CSS live preview, JS live preview, web development tutorial, code testing environment, code sandbox, online web tools, interactive web tools, web app builder, JavaScript IDE, online CSS editor, HTML tutorial, code playground, real-time code editor online, front-end code editor, real-time HTML compiler, code collaboration tools, HTML code editor, CSS code editor, JavaScript online editor, HTML CSS JS code editor, online IDE"
+    />
+    <meta name="author" content="frenzy" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="HTML Compiler" />
+    <meta
+      property="og:description"
+      content="Interactive HTML, CSS, JS Compiler in one tab. Compile and test your HTML, CSS, and JavaScript code seamlessly with a live preview."
+    />
+    <meta
+      property="og:image"
+      content="https://www.svgrepo.com/show/252525/code.svg"
+    />
+    <meta property="og:url" content="https://htmlrun.vercel.app" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="HTML Compiler" />
+    <meta
+      name="twitter:description"
+      content="Interactive HTML, CSS, JS Compiler in one tab. Compile and test your HTML, CSS, and JavaScript code seamlessly with a live preview."
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.svgrepo.com/show/252525/code.svg"
+    />
+    <style>
+      body {
+        font-family: "Courier New", Courier, monospace;
+        background-color: #1e1e1e;
+        color: #c9d1d9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1 {
+        color: #61dafb;
+        font-size: 24px;
+        margin: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 800px;
+        border: 1px solid #444c56;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        display: flex; 
+        flex-direction: column; 
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        gap: 15px;
+        background-color: transparent;
+      }
+      .button-container img {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        margin-top: 5px;
+      }
+      .button-container img:hover {
+        transform: scale(1.1);
+        filter: brightness(1.2);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          width: 95%;
+          margin: 10px;
+        }
+        .tab-bar {
+          font-size: 14px;
+        }
+      }
+
+      .tab-bar {
+        display: flex;
+        background-color: #333;
+        border-bottom: 1px solid #444c56;
+      }
+      .tab {
+        flex: 1;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        color: #c9d1d9;
+        background-color: #282c34;
+        transition: background-color 0.3s;
+      }
+      .tab:hover,
+      .tab.active {
+        background-color: #444c56;
+      }
+
+      .editor-container {
+        display: flex;
+        flex-direction: row; 
+        width: 100%;
+        height: 300px; 
+      }
+
+      .line-numbers {
+        background-color: #282c34;
+        color: white;
+        padding: 10px;
+        text-align: right;
+        border-right: 1px solid #444c56;
+      }
+      .line-numbers span {
+        display: block;
+      }
+
+      #editor {
+        width: 100%;
+        height: 300px;
+        padding: 10px;
+        font-size: 14px;
+        font-family: monospace;
+        color: #abb2bf;
+        background-color: #282c34;
+        border: none;
+        outline: none;
+        white-space: pre;
+        overflow-wrap: break-word;
+        line-height: 1.5em;
+        resize: none;
+      }
+
+      .syntax-html .tag {
+        color: #e06c75;
+      }
+      .syntax-html .attribute {
+        color: #d19a66;
+      }
+      .syntax-html .string {
+        color: #98c379;
+      }
+      .syntax-js .keyword,
+      .syntax-css .selector {
+        color: #c678dd;
+      }
+      .syntax-js .function,
+      .syntax-css .property {
+        color: #61dafb;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+      }
+      .modal-content {
+        width: 90%;
+        max-width: 800px;
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        padding: 20px;
+        position: relative;
+      }
+      .modal-content iframe {
+        width: 100%;
+        height: 400px;
+        border: none;
+        border-radius: 5px;
+        background-color: white;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+      }
+
+      .close-btn img {
+        width: 24px; 
+        height: 24px;
+        filter: brightness(0) invert(1); 
+      }
+
+      .close-btn:hover img {
+        filter: brightness(0.8) sepia(1) hue-rotate(-50deg); 
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Interactive HTML Compiler.</h1>
+    <div class="container">
+      <!-- List File (Tabs) -->
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('html')">index.html</div>
+        <div class="tab" onclick="switchTab('css')">style.css</div>
+        <div class="tab" onclick="switchTab('js')">script.js</div>
+      </div>
+      <!-- Editor dengan Line Numbers -->
+      <div class="editor-container">
+        <div class="line-numbers" id="line-numbers"></div>
+        <textarea id="editor" placeholder="Write your code here..."></textarea>
+      </div>
+    </div>
+    <div class="button-container">
+      <img
+        src="https://cdn.pixabay.com/photo/2014/04/03/00/40/play-309042_1280.png"
+        alt="Run"
+        onclick="runCode()"
+        title="Run Code"
+      />
+      <img
+        src="https://cdn.pixabay.com/photo/2014/11/10/17/47/refresh-525698_1280.png"
+        alt="Reset"
+        onclick="resetCode()"
+        title="Reset Code"
+      />
+      <img
+        src="https://cdn.pixabay.com/photo/2013/03/29/13/38/wipe-97583_960_720.png"
+        alt="Clean Code"
+        onclick="cleanCode()"
+        title="Clean Code"
+        style="
+          width: 30px;
+          height: 30px;
+          cursor: pointer;
+          transition: transform 0.2s;
+        "
+      />
+    </div>
+    <!-- Modal Popup untuk Output -->
+    <div class="modal" id="output-modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">
+          <img
+            src="https://cdn.pixabay.com/photo/2016/10/10/01/49/x-1727490_1280.png"
+            alt="Close"
+          />
+        </span>
+        <iframe id="output-frame"></iframe>
+      </div>
+    </div>
+    <h1>Website Purposes</h1>
+    <ul>
+      <li>This website can run/compile your HTML, CSS, JS Codes in one tap.</li>
+      <li>
+        We also provided a “Code Cleaner” or “Tidying Up Code” in a broom icon.
+      </li>
+    </ul>
+    <h1>HTML Tag List</h1>
+    <ul>
+      <li>
+        <strong>&lt;html&gt;</strong>: The root element of an HTML document.
+      </li>
+      <li>
+        <strong>&lt;head&gt;</strong>: Contains meta-information (e.g., title,
+        scripts).
+      </li>
+      <li>
+        <strong>&lt;title&gt;</strong>: Sets the title of the document, shown in
+        the browser tab.
+      </li>
+      <li><strong>&lt;body&gt;</strong>: Main content of the HTML document.</li>
+      <li>
+        <strong>&lt;base&gt;</strong>: Sets the base URL for all relative links
+        in the document.
+      </li>
+      <li>
+        <strong>&lt;link&gt;</strong>: Links to external resources, like
+        stylesheets.
+      </li>
+      <li>
+        <strong>&lt;meta&gt;</strong>: Provides metadata (e.g., charset,
+        viewport).
+      </li>
+      <li><strong>&lt;style&gt;</strong>: Embeds CSS styles.</li>
+      <li>
+        <strong>&lt;script&gt;</strong>: Embeds or links to JavaScript code.
+      </li>
+      <li>
+        <strong>&lt;noscript&gt;</strong>: Content shown if JavaScript is
+        disabled.
+      </li>
+      <li>
+        <strong>&lt;h1&gt; - &lt;h6&gt;</strong>: Headings, from most important
+        (&lt;h1&gt;) to least important (&lt;h6&gt;).
+      </li>
+      <li><strong>&lt;p&gt;</strong>: Paragraph of text.</li>
+      <li><strong>&lt;b&gt;</strong>: Bold text (for styling only).</li>
+      <li><strong>&lt;i&gt;</strong>: Italic text (for styling only).</li>
+      <li><strong>&lt;u&gt;</strong>: Underlined text.</li>
+      <li><strong>&lt;strong&gt;</strong>: Important/bolded text.</li>
+      <li><strong>&lt;em&gt;</strong>: Emphasized/italic text.</li>
+      <li><strong>&lt;small&gt;</strong>: Small text.</li>
+      <li><strong>&lt;mark&gt;</strong>: Highlighted text.</li>
+      <li><strong>&lt;del&gt;</strong>: Deleted text.</li>
+      <li><strong>&lt;ins&gt;</strong>: Inserted text.</li>
+      <li>
+        <strong>&lt;sub&gt;</strong>: Subscript text (e.g., H<sub>2</sub>O).
+      </li>
+      <li>
+        <strong>&lt;sup&gt;</strong>: Superscript text (e.g., E =
+        mc<sup>2</sup>).
+      </li>
+      <li><strong>&lt;blockquote&gt;</strong>: Quoted section.</li>
+      <li><strong>&lt;cite&gt;</strong>: Citation.</li>
+      <li><strong>&lt;q&gt;</strong>: Inline quote.</li>
+      <li><strong>&lt;abbr&gt;</strong>: Abbreviation (e.g., HTML).</li>
+      <li><strong>&lt;address&gt;</strong>: Contact information.</li>
+      <li><strong>&lt;bdi&gt;</strong>: Bidirectional text isolation.</li>
+      <li><strong>&lt;bdo&gt;</strong>: Override text direction.</li>
+      <li><strong>&lt;br&gt;</strong>: Line break.</li>
+      <li><strong>&lt;wbr&gt;</strong>: Optional line break.</li>
+      <li><strong>&lt;ul&gt;</strong>: Unordered list.</li>
+      <li><strong>&lt;ol&gt;</strong>: Ordered list.</li>
+      <li><strong>&lt;li&gt;</strong>: List item.</li>
+      <li><strong>&lt;dl&gt;</strong>: Definition list.</li>
+      <li><strong>&lt;dt&gt;</strong>: Definition term.</li>
+      <li><strong>&lt;dd&gt;</strong>: Definition description.</li>
+      <li><strong>&lt;img&gt;</strong>: Image.</li>
+      <li><strong>&lt;figure&gt;</strong>: Image with caption.</li>
+      <li><strong>&lt;figcaption&gt;</strong>: Caption for &lt;figure&gt;.</li>
+      <li><strong>&lt;audio&gt;</strong>: Audio player.</li>
+      <li><strong>&lt;video&gt;</strong>: Video player.</li>
+      <li><strong>&lt;source&gt;</strong>: Specifies media source.</li>
+      <li><strong>&lt;track&gt;</strong>: Subtitles for media.</li>
+      <li><strong>&lt;a&gt;</strong>: Hyperlink.</li>
+      <li><strong>&lt;form&gt;</strong>: Creates a form for user input.</li>
+      <li><strong>&lt;input&gt;</strong>: Input field within a form.</li>
+      <li><strong>&lt;textarea&gt;</strong>: Multiline text input.</li>
+      <li><strong>&lt;button&gt;</strong>: Clickable button.</li>
+      <li><strong>&lt;select&gt;</strong>: Dropdown list.</li>
+      <li>
+        <strong>&lt;optgroup&gt;</strong>: Groups options within a dropdown.
+      </li>
+      <li><strong>&lt;option&gt;</strong>: Option within a dropdown.</li>
+      <li><strong>&lt;label&gt;</strong>: Label for form elements.</li>
+      <li><strong>&lt;fieldset&gt;</strong>: Groups form elements.</li>
+      <li><strong>&lt;legend&gt;</strong>: Caption for &lt;fieldset&gt;.</li>
+      <li>
+        <strong>&lt;datalist&gt;</strong>: Provides a list of suggestions for
+        input fields.
+      </li>
+      <li><strong>&lt;output&gt;</strong>: Displays calculation or result.</li>
+      <li><strong>&lt;table&gt;</strong>: Table structure.</li>
+      <li><strong>&lt;caption&gt;</strong>: Caption for a table.</li>
+      <li><strong>&lt;thead&gt;</strong>: Header section of a table.</li>
+      <li><strong>&lt;tbody&gt;</strong>: Body section of a table.</li>
+      <li><strong>&lt;tfoot&gt;</strong>: Footer section of a table.</li>
+      <li><strong>&lt;tr&gt;</strong>: Table row.</li>
+      <li><strong>&lt;th&gt;</strong>: Header cell in a table.</li>
+      <li><strong>&lt;td&gt;</strong>: Data cell in a table.</li>
+      <li><strong>&lt;col&gt;</strong>: Defines attributes for columns.</li>
+      <li><strong>&lt;colgroup&gt;</strong>: Groups columns.</li>
+      <li><strong>&lt;div&gt;</strong>: Generic container.</li>
+      <li><strong>&lt;span&gt;</strong>: Inline container.</li>
+      <li>
+        <strong>&lt;header&gt;</strong>: Defines header for a document or
+        section.
+      </li>
+      <li>
+        <strong>&lt;footer&gt;</strong>: Footer for a document or section.
+      </li>
+      <li><strong>&lt;main&gt;</strong>: Main content area.</li>
+      <li>
+        <strong>&lt;section&gt;</strong>: Defines a section in a document.
+      </li>
+      <li><strong>&lt;article&gt;</strong>: Self-contained content.</li>
+      <li><strong>&lt;nav&gt;</strong>: Navigation links.</li>
+      <li><strong>&lt;aside&gt;</strong>: Sidebar content.</li>
+      <li><strong>&lt;details&gt;</strong>: Toggles additional information.</li>
+      <li>
+        <strong>&lt;summary&gt;</strong>: Visible header for &lt;details&gt;.
+      </li>
+      <li><strong>&lt;dialog&gt;</strong>: Dialog box.</li>
+      <li><strong>&lt;data&gt;</strong>: Links to a machine-readable value.</li>
+      <li><strong>&lt;time&gt;</strong>: Specifies time/date.</li>
+      <li>
+        <strong>&lt;meter&gt;</strong>: Visual display of a value within a
+        range.
+      </li>
+      <li><strong>&lt;progress&gt;</strong>: Shows progress of a task.</li>
+      <li>
+        <strong>&lt;template&gt;</strong>: HTML not rendered until called by
+        JavaScript.
+      </li>
+      <li><strong>&lt;svg&gt;</strong>: Scalable Vector Graphics.</li>
+      <li><strong>&lt;math&gt;</strong>: Mathematical expressions.</li>
+      <li><strong>&lt;canvas&gt;</strong>: Drawing area for graphics.</li>
+      <li>
+        <strong>&lt;embed&gt;</strong>: Embeds external content (e.g., PDF).
+      </li>
+      <li><strong>&lt;object&gt;</strong>: Embeds objects (e.g., plugins).</li>
+      <li><strong>&lt;param&gt;</strong>: Parameters for &lt;object&gt;.</li>
+      <li><strong>&lt;iframe&gt;</strong>: Embeds another HTML page.</li>
+      <li><strong>&lt;hr&gt;</strong>: Horizontal rule (line).</li>
+      <li><strong>&lt;code&gt;</strong>: Inline code snippet.</li>
+      <li><strong>&lt;pre&gt;</strong>: Preformatted text.</li>
+      <li><strong>&lt;kbd&gt;</strong>: Keyboard input.</li>
+      <li><strong>&lt;samp&gt;</strong>: Sample output.</li>
+      <li><strong>&lt;var&gt;</strong>: Variable in programming or math.</li>
+    </ul>
+    <strong>Created by Frenzy.</strong>
+    <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/parser-html.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/parser-postcss.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script>
+    <script src="script.js"></script>
